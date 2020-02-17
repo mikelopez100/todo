@@ -1,36 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:todolist/models/task.dart';
 import 'package:todolist/screens/addscreen.dart';
+import 'package:todolist/utils/persistence.dart';
 
 class Homescreen extends StatefulWidget {
-  Homescreen({Key key, this.title}) : super(key: key);
+  List<Task> tasks;
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+  Homescreen(this.tasks);
 
   @override
   _HomescreenState createState() => _HomescreenState();
 }
 
 class _HomescreenState extends State<Homescreen> {
-  List<Task> tasks;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    Task t1 = Task("do the dishes", false);
-    Task t2 = Task("take out the trash", false);
-    Task t3 = Task("tap out schweller", false);
-    tasks = [t1, t2, t3];
   }
 
   @override
@@ -47,16 +33,19 @@ class _HomescreenState extends State<Homescreen> {
         onPressed: () async {
           //navigate to a new screen
           //receive a value when i come back from the screen
-            Navigator.push(
+          String taskText = await Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => Addscreen()),
             );
 
           //how do a make a new task from that value
-          Task t = Task("asdf", false);
+          Task t = Task(taskText, false);
 
           //add it to the list of tasks
-          tasks.add(t);
+          widget.tasks.add(t);
+
+          //save list of tasks to file system
+          writeTaskList(widget.tasks);
         },
       ),
       appBar: AppBar(
@@ -70,14 +59,14 @@ class _HomescreenState extends State<Homescreen> {
           child: ListView.builder(
         itemBuilder: (ctx, i) {
           return CheckboxListTile(
-              title: Text(tasks[i].text),
-              value: tasks[i].completed,
+              title: Text(widget.tasks[i].text),
+              value: widget.tasks[i].completed,
               onChanged: (bool b) {
-                tasks[i].completed = b;
+                widget.tasks[i].completed = b;
                 setState(() {});
               });
         },
-        itemCount: tasks.length,
+        itemCount: widget.tasks.length,
       )),
     );
   }

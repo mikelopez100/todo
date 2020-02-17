@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:todolist/utils/persistence.dart';
 import 'screens/homescreen.dart';
+import 'models/task.dart';
 
 void main() => runApp(MyApp());
 
@@ -21,7 +23,22 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: Homescreen(title: 'Flutter Demo Home Page'),
+      home: FutureBuilder<List<Task>>(
+        future: readTaskList(),
+        builder: (ctx, snapshot){
+          if(snapshot.hasData){
+            return Homescreen(snapshot.data);
+          }else if(snapshot.hasError){
+            return Padding(
+            padding: const EdgeInsets.only(top: 16),
+            child: Text('Error: ${snapshot.error}'),
+          );
+          }else{
+            print(snapshot.connectionState);
+            return Scaffold(body: Center(child: CircularProgressIndicator(),),);
+          }
+        },
+      ),
     );
   }
 }
