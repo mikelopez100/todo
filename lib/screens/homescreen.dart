@@ -38,14 +38,18 @@ class _HomescreenState extends State<Homescreen> {
               MaterialPageRoute(builder: (context) => Addscreen()),
             );
 
-          //how do a make a new task from that value
-          Task t = Task(taskText, false);
+          if(taskText != null){
+            //how do a make a new task from that value
+            Task t = Task(taskText, false);
 
-          //add it to the list of tasks
-          widget.tasks.add(t);
+            //add it to the list of tasks
+            widget.tasks.add(t);
 
-          //save list of tasks to file system
-          writeTaskList(widget.tasks);
+            //save list of tasks to file system
+            writeTaskList(widget.tasks);
+          }
+
+
         },
       ),
       appBar: AppBar(
@@ -59,7 +63,7 @@ class _HomescreenState extends State<Homescreen> {
           child: ListView.builder(
         itemBuilder: (ctx, i) {
           return CheckboxListTile(
-              title: Text(widget.tasks[i].text),
+              title: Text(widget.tasks[i].text != null ? widget.tasks[i].text : ""),
               value: widget.tasks[i].completed,
               onChanged: (bool b) {
                 widget.tasks[i].completed = b;
