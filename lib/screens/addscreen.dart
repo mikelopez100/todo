@@ -16,7 +16,7 @@ class Addscreen extends StatelessWidget {
           //go back to the previous screen
           //and return the value in the textbox
           print(taskCtrl.text);
-          Navigator.pop(context, "HARDCODED VALUE");
+          Navigator.pop(context, taskCtrl.text);
         },)
       ],),
     );

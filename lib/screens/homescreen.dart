@@ -13,7 +13,6 @@ class Homescreen extends StatefulWidget {
 }
 
 class _HomescreenState extends State<Homescreen> {
-
   @override
   void initState() {
     super.initState();
@@ -34,11 +33,11 @@ class _HomescreenState extends State<Homescreen> {
           //navigate to a new screen
           //receive a value when i come back from the screen
           String taskText = await Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => Addscreen()),
-            );
+            context,
+            MaterialPageRoute(builder: (context) => Addscreen()),
+          );
 
-          if(taskText != null){
+          if (taskText != null) {
             //how do a make a new task from that value
             Task t = Task(taskText, false);
 
@@ -48,8 +47,6 @@ class _HomescreenState extends State<Homescreen> {
             //save list of tasks to file system
             writeTaskList(widget.tasks);
           }
-
-
         },
       ),
       appBar: AppBar(
@@ -62,13 +59,30 @@ class _HomescreenState extends State<Homescreen> {
           // in the middle of the parent.
           child: ListView.builder(
         itemBuilder: (ctx, i) {
-          return CheckboxListTile(
-              title: Text(widget.tasks[i].text != null ? widget.tasks[i].text : ""),
-              value: widget.tasks[i].completed,
-              onChanged: (bool b) {
-                widget.tasks[i].completed = b;
-                setState(() {});
-              });
+          return Dismissible(
+            key: UniqueKey(),
+            child: CheckboxListTile(
+                activeColor: Colors.grey,
+                title: Text(
+                    
+                    widget.tasks[i].text != null ? widget.tasks[i].text : "", 
+                    style: TextStyle(color : widget.tasks[i].completed ? (Colors.grey) : (Colors.black)),),
+                value: widget.tasks[i].completed,
+                onChanged: (bool b) {
+                  widget.tasks[i].completed = b;
+                  writeTaskList(widget.tasks);
+                  if(b){
+                  widget.tasks.add((widget.tasks[i]));
+                  widget.tasks.remove((widget.tasks[i]));
+                  
+                  }
+                  setState(() {});
+                }),
+            onDismissed: (direction) {
+              widget.tasks.removeAt(i);
+              setState(() {writeTaskList(widget.tasks);});
+            },
+          );
         },
         itemCount: widget.tasks.length,
       )),
